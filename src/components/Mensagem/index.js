@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
+import { AuthContext } from '../../contexts/auth';
 import styles from './styles';
 
 function Mensagem (props) {
-    const usuario = {
-        nome: 'Marco',
-        id: 'WpRZ4vTqzGhS44BlLnWjeUenEwe2',
-        email: 'marcoant008@gmail.com',
-    }
+    const { usuario } = useContext(AuthContext);
     const { msg } = props;
     const [selected, setSelected] = useState(false);
     const isAutor = usuario.id === msg.idRemetente;

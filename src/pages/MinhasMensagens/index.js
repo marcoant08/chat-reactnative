@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Text, ToastAndroid, View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { Text, ToastAndroid, View, TouchableOpacity } from 'react-native';
 import Conversa from '../../components/Conversa';
 import Header from '../../components/Header';
 import styles from './styles';
 import firebase from '../../services/firebase';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AuthContext } from '../../contexts/auth';
+import { useNavigation } from '@react-navigation/native';
 
 function MinhasMensagens () {
     const [conversas, setConversas] = useState([]);
-    const usuario = {
-        nome: 'Marco',
-        id: 'WpRZ4vTqzGhS44BlLnWjeUenEwe2',
-        email: 'marcoant008@gmail.com',
-    }
+    const { usuario } = useContext(AuthContext);
+    const navigation = useNavigation();
 
     useEffect(() => {
         async function load() {
@@ -35,7 +35,7 @@ function MinhasMensagens () {
                         return 0;
                     });
 
-                    console.log(aux)
+                    //console.log(aux)
                     setConversas(aux)
                 })
                 .catch((err) => {
@@ -49,7 +49,12 @@ function MinhasMensagens () {
     return (
         <View style={styles.container}>
             <Header/>
-            <Text style={styles.title}>Minhas Mensagens</Text>
+            <View style={styles.containerTitle}>
+                <Text style={styles.title}>Minhas Mensagens</Text>
+                <TouchableOpacity style={styles.buttonNewMessage} onPress={() => navigation.push('NovaMensagem')} >
+                    <MaterialCommunityIcons name='plus' size={30} color='#333' />
+                </TouchableOpacity>
+            </View>
             {
                 conversas.map(item => (
                     <Conversa key={item.id} conv={item} />

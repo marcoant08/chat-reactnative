@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, ScrollView, Text, ToastAndroid, Keyboard } from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Header from '../../components/Header';
 import styles from './styles';
 import Mensagem from '../../components/Mensagem';
 import firebase from '../../services/firebase';
+import { AuthContext } from '../../contexts/auth';
 
 function Chat ({ route }) {
     const [message, setMessage] = useState('');
     const [caregando, setCarregando] = useState(true);
     const [enviando, setEnviando] = useState(true);
     const [allMessages, setAllMessages] = useState([]);
-    const usuario = {
-        nome: 'Marco',
-        id: 'WpRZ4vTqzGhS44BlLnWjeUenEwe2',
-        email: 'marcoant008@gmail.com',
-    }
-    const { idConversa } = route.params;
+    const { usuario } = useContext(AuthContext);
+    const { idUser } = route.params;
+    const idConversa = idUser > usuario.id ? idUser.concat(usuario.id) : usuario.id.concat(idUser);
 
     useEffect(() => {
         /* setInterval(function(){ 
@@ -56,21 +54,8 @@ function Chat ({ route }) {
                         aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() });
                     });
 
-                    /* aux.sort(function (a, b) {
-                        if (a?.createdAt.seconds > b?.createdAt.seconds) {
-                          return 1;
-                        }
-                        if (a?.createdAt.seconds < b?.createdAt.seconds) {
-                          return -1;
-                        }
-                        // a must be equal to b
-                        return 0;
-                    }); */
-
-                    console.log(aux)
-
-                    setAllMessages(aux);
-                    setCarregando(false);
+                    console.log(aux);
+                    setAllMessages(aux)
                 })
                 .catch((err) => {
                     ToastAndroid.show("Erro ao obter mensagens.", ToastAndroid.SHORT);
@@ -78,7 +63,7 @@ function Chat ({ route }) {
         }
 
         load();
-    }, [])
+    }, []);
 
     async function handleSend () {
         setEnviando(true)
@@ -89,8 +74,8 @@ function Chat ({ route }) {
             .add({
                 conteudo: message,
                 idRemetente: usuario.id,
-                idDestinatario: '06IzHTTb7QPtVnqhDB7zfrfhHeD2',
-                idConversa: 'YL1RnPVXFDGZh9GYJfKz',
+                idDestinatario: idUser,
+                idConversa,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             })
             .then((value) => {
