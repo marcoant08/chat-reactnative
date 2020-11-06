@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, Text, ToastAndroid, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, Text, ToastAndroid, Keyboard, Image } from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Header from '../../components/Header';
 import styles from './styles';
@@ -12,14 +12,33 @@ function Chat ({ route }) {
     const [caregando, setCarregando] = useState(true);
     const [caregandoMensagens, setCarregandoMensagens] = useState(true);
     const [enviando, setEnviando] = useState(true);
+    const [destinatario, setDestinatario] = useState({});
     const [allMessages, setAllMessages] = useState([]);
     const { usuario } = useContext(AuthContext);
     const { idUser } = route.params;
     const idConversa = idUser > usuario.id ? idUser.concat(usuario.id) : usuario.id.concat(idUser);
     const [conversaExiste, setConversaExiste] = useState(false)
 
-    useEffect(() => {
+    /* useEffect(() => {
         console.log(idUser, usuario.id, idConversa)
+    }, []); */
+
+    useEffect(() => {
+        async function load() {
+            await firebase
+                .firestore()
+                .collection("usuarios")
+                .doc(idUser)
+                .get()
+                .then((snapshot) => {
+                    setDestinatario(snapshot.data())
+                })
+                .catch((err) => {
+                    ToastAndroid.show("Erro ao obter inforações do destinatário.", ToastAndroid.SHORT);
+                });
+        }
+
+        load();
     }, []);
 
     useEffect(() => {
@@ -35,7 +54,20 @@ function Chat ({ route }) {
                         aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() });
                     });
 
-                    console.log(aux);
+                    /* if (!!aux[aux.length-1].createdAt) {
+                        aux.sort(function (a, b) {
+                            if (a.createdAt.seconds > b.createdAt.seconds) {
+                                return 1;
+                            }
+                            if (a.createdAt.seconds < b.createdAt.seconds) {
+                                return -1;
+                            }
+                            // a must be equal to b
+                            return 0;
+                        });
+                    } */
+
+                    //console.log(aux);
                     setAllMessages(aux);
                     setCarregandoMensagens(false);
                 })
@@ -125,7 +157,13 @@ function Chat ({ route }) {
     return (
         <View style={styles.container}>
             <Header/>
-            <Text style={styles.title}>{allMessages.length} mensagens trocadas {conversaExiste ? "true" : 'false'}</Text>
+            <View style={styles.containerInfos}>
+                <View style={styles.containerDescription}>
+                    <Text style={styles.nome}>{destinatario.nome}</Text>
+                    <Text style={styles.description}>UX Design | <Text style={{ fontWeight: 'bold' }}>Kawasaki ER-6</Text></Text>
+                </View>
+            </View>
+            <Image style={styles.avatar} source={{ uri: destinatario.avatar}} />
             <View style={styles.containerMessages}>
                 <ScrollView>
                 {
@@ -136,16 +174,18 @@ function Chat ({ route }) {
                 </ScrollView>
             </View>
             <View style={styles.containerInput}>
-                <TextInput
-                    placeholder='Escreva alguma coisa...'
-                    multiline
-                    style={styles.input}
-                    value={message}
-                    onChangeText={setMessage}
-                />
-                <TouchableOpacity style={styles.sendButton} onPress={!conversaExiste ? criarConversa : send}>
-                    <MaterialCommunityIcons name='send' size={25} color='#333' />
-                </TouchableOpacity>
+                <View style={styles.containerInput2}>
+                    <TextInput
+                        placeholder='Digite aqui...'
+                        multiline
+                        style={styles.input}
+                        value={message}
+                        onChangeText={setMessage}
+                    />
+                    <TouchableOpacity style={styles.sendButton} onPress={!conversaExiste ? criarConversa : send}>
+                        <MaterialCommunityIcons name='chat-outline' size={25} color='#f25c05' />
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )

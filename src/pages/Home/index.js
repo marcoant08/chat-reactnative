@@ -6,7 +6,6 @@ import styles from './styles';
 
 function Home () {
     const navigation = useNavigation();
-    const [id, setId] = useState('');
 
     return (
         <View style={styles.container}>

@@ -8,15 +8,23 @@ const styles = StyleSheet.create({
 
   balao: {
     flex: 1,
-    height: 50,
-    backgroundColor: '#ddd',
+    minHeight: 55,
+    backgroundColor: '#fff',
     marginHorizontal: 10,
-    marginVertical: 4,
+    marginVertical: 10,
+    paddingVertical: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#999',
     borderRadius: 40,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+
+    elevation: 7,
   },
 
   time: {
@@ -25,7 +33,7 @@ const styles = StyleSheet.create({
   },
 
   mensagem: {
-      fontSize: 16,
+      fontSize: 16
   }
 });
 

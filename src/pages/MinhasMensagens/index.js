@@ -56,7 +56,7 @@ function MinhasMensagens () {
             <Header/>
             <View style={styles.containerTitle}>
                 <Text style={styles.title}>Minhas Mensagens</Text>
-                <TouchableOpacity style={styles.buttonNewMessage} onPress={() => navigation.push('NovaMensagem')} >
+                <TouchableOpacity style={styles.buttonNewMessage} onPress={() => navigation.navigate('NovaMensagem')} >
                     <MaterialCommunityIcons name='plus' size={30} color='#333' />
                 </TouchableOpacity>
             </View>

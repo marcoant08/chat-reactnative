@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     width: '98%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     alignSelf: 'center',
   },
 
@@ -20,21 +21,34 @@ const styles = StyleSheet.create({
   },
 
   name: {
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: 16,
+      color: '#262626'
   },
 
   preview: {
     fontSize: 16,
+      color: '#999'
   },
 
   time: {
     fontSize: 16,
-    color: '#777'
+    color: '#777',
+    marginHorizontal: 10
   },
 
   containerInfos: {
     flexDirection: 'row'
+  },
+
+  containerFotoMensagem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  containerHoraIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10
   }
 
 });

@@ -20,8 +20,8 @@ function Mensagem (props) {
                 activeOpacity={0.8}
                 onPress={() => setSelected(!selected)}
             >
-        <View style={[styles.balao, isAutor ? { borderBottomEndRadius: 0, backgroundColor: '#fff' } :  { borderBottomStartRadius: 0 }]}>
-            <Text style={styles.mensagem}>{msg.conteudo} <Text></Text></Text>
+        <View style={[styles.balao, isAutor ? { borderBottomEndRadius: 0, backgroundColor: '#021740' } :  { borderBottomStartRadius: 0 }]}>
+            <Text style={[styles.mensagem, { color: isAutor ? '#fff' : '#222' }]}>{msg.conteudo} <Text></Text></Text>
         </View>
         { selected && <Text style={[styles.time, isAutor && { alignSelf: 'flex-end' }]}>{toDateTime(msg.createdAt.seconds).toString()}<Text></Text></Text> }
     </TouchableOpacity>
