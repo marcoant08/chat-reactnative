@@ -24,7 +24,7 @@ function MinhasMensagens () {
 
                     querySnapshot.forEach((documentSnapshot) => { aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() }) });
 
-                    aux.sort(function (a, b) {
+                    /* aux.sort(function (a, b) {
                         if (a.createdAt.seconds > b.createdAt.seconds) {
                         return 1;
                         }
@@ -33,9 +33,9 @@ function MinhasMensagens () {
                         }
                         // a must be equal to b
                         return 0;
-                    });
+                    }); */
 
-                    //console.log(aux)
+                    console.log(aux)
                     setConversas(aux)
                 })
                 .catch((err) => {
@@ -45,6 +45,11 @@ function MinhasMensagens () {
 
         load();
     }, []);
+
+
+    /* useEffect(() => {
+        console.log(usuario.id.replace('JJQJ2', '').length)
+    }, []); */
 
     return (
         <View style={styles.container}>

@@ -8,7 +8,8 @@ import styles from './styles';
 
 function Conversa (props) {
     const navigation = useNavigation();
-    const [destinatarios, setDestinatarios] = useState([]);
+    //const [destinatarios, setDestinatarios] = useState([]);
+    const [destinatario, setDestinatario] = useState({});
     const { conv } = props;
     const { usuario } = useContext(AuthContext);
 
@@ -16,34 +17,26 @@ function Conversa (props) {
         async function load() {
             await firebase
                 .firestore()
-                .collection("conversas")
-                .where("idConversa", "==", conv.idConversa)
+                .collection("usuarios")
+                .doc(conv.idConversa.replace(usuario.id, ''))
                 .get()
-                .then((querySnapshot) => {
-                    let aux = [];
-
-                    querySnapshot.forEach((documentSnapshot) => {
-                        aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() });
-                    });
-
-                    console.log(aux)
-                    setDestinatarios(aux.filter(item => item.idUser !== usuario.id));
+                .then((snapshot) => {
+                    setDestinatario(snapshot.data())
+                    //console.log(snapshot.data())
                 })
                 .catch((err) => {
                     ToastAndroid.show("Erro ao obter mensagens.", ToastAndroid.SHORT);
                 });
         }
-
+        console.log(conv.idConversa.replace(usuario.id, ''), usuario.id)
         load();
     }, [])
 
-    return <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Chat', { idConversa: conv.idConversa })}>
-        <Image style={styles.avatar} source={{ uri: destinatarios[0]?.avatar }} />
+    return <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Chat', { idUser: conv.idConversa.replace(usuario.id, '') })}>
+        <Image style={styles.avatar} source={{ uri: destinatario?.avatar }} />
         <View>
             <View style={styles.containerInfos}>
-                { destinatarios.map((item, i) => <Text key={item.id} style={styles.name}>{
-                    i === 0 ? `${item.nome}` : `, ${item.nome}` 
-                }</Text>) }
+                <Text style={styles.name}>{destinatario?.nome}</Text>
             </View>
             <Text style={styles.preview}>Olá, boa noite!<Text style={styles.time}> - 11:34</Text></Text>
         </View>
