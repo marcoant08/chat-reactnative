@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, ToastAndroid, View, TouchableOpacity } from 'react-native';
+import { Text, ToastAndroid, View, TouchableOpacity, FlatList } from 'react-native';
 import Conversa from '../../components/Conversa';
 import Header from '../../components/Header';
 import styles from './styles';
@@ -19,21 +19,22 @@ function MinhasMensagens () {
                 .firestore()
                 .collection("conversas")
                 .where("idUser", "==", usuario.id)
+                //.orderBy('createdAt', 'desc')
                 .onSnapshot((querySnapshot) => {
                     let aux = [];
 
                     querySnapshot.forEach((documentSnapshot) => { aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() }) });
 
-                    /* aux.sort(function (a, b) {
-                        if (a.createdAt.seconds > b.createdAt.seconds) {
-                        return 1;
+                    aux.sort(function (a, b) {
+                        if (a.ordem < b.ordem) {
+                            return 1;
                         }
-                        if (a.createdAt.seconds < b.createdAt.seconds) {
-                        return -1;
+                        if (a.ordem > b.ordem) {
+                            return -1;
                         }
                         // a must be equal to b
                         return 0;
-                    }); */
+                    });
 
                     console.log(aux)
                     setConversas(aux)
@@ -46,11 +47,6 @@ function MinhasMensagens () {
         load();
     }, []);
 
-
-    /* useEffect(() => {
-        console.log(usuario.id.replace('JJQJ2', '').length)
-    }, []); */
-
     return (
         <View style={styles.container}>
             <Header/>
@@ -60,11 +56,14 @@ function MinhasMensagens () {
                     <MaterialCommunityIcons name='plus' size={30} color='#333' />
                 </TouchableOpacity>
             </View>
-            {
-                conversas.map(item => (
-                    <Conversa key={item.id} conv={item} />
-                ))
-            }
+            <FlatList
+                showsVerticalScrollIndicator={false}
+                data={conversas}
+                renderItem={({ item, index }) => (
+                    <Conversa conv={item} />
+                )}
+                keyExtractor={(item) => String(item.id)}
+            />
         </View>
     )
 }

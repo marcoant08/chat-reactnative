@@ -19,7 +19,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     marginHorizontal: 20,
   },
-
+/* 
+  avatar:{
+    marginLeft:13,
+    width:45,
+    height:45,
+    borderRadius:50,
+    marginRight:8
+  },
+   */
   name: {
       fontSize: 16,
       color: '#262626'

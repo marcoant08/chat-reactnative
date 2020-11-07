@@ -4,13 +4,18 @@ export const AuthContext = createContext({});
 
 function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState({
-      id: 'WpRZ4vTqzGhS44BlLnWjeUenEwe2',
+      id: 'epPBdIwKjOPNzRK1zgqLqS0JJQJ2',
       nome: 'Marco',
       email: 'marcoant008@gmail.com'
   });
 
+  function alterar (u) {
+    console.log(u)
+    setUsuario(u)
+  }
+
   return (
-    <AuthContext.Provider value={{ usuario }}>
+    <AuthContext.Provider value={{ usuario, alterar }}>
       {children}
     </AuthContext.Provider>
   );

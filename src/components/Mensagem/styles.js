@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
   },
 
   balao: {
-    flex: 1,
     minHeight: 55,
     backgroundColor: '#fff',
     marginHorizontal: 10,
@@ -23,7 +22,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.29,
     shadowRadius: 4.65,
-
     elevation: 7,
   },
 

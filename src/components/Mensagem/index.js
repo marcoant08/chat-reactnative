@@ -12,7 +12,21 @@ function Mensagem (props) {
     function toDateTime(secs) {
         let t = new Date(Date.UTC(1970, 0, 1)); // Epoch
         t.setUTCSeconds(secs);
-        return t;
+
+        let dia = t.getDate();
+        let mes = t.getMonth() + 1;
+        let ano = t.getFullYear();
+        let hora = t.getHours();
+        let minutos = t.getMinutes();
+
+        if (dia<10) dia = "0".concat(dia)
+        if (mes<10) mes = "0".concat(mes)
+        if (hora<10) hora = "0".concat(hora)
+        if (minutos<10) minutos = "0".concat(minutos)
+
+        const data = `${dia}/${mes}/${ano} às ${hora}:${minutos}`;
+
+        return data;
     }
 
     return <TouchableOpacity

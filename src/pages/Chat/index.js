@@ -1,17 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, Text, ToastAndroid, Keyboard, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, Text, ToastAndroid, Keyboard, Image, FlatList } from 'react-native';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Header from '../../components/Header';
 import styles from './styles';
 import Mensagem from '../../components/Mensagem';
 import firebase from '../../services/firebase';
 import { AuthContext } from '../../contexts/auth';
+import Svg, {
+    Image as SvgImage,
+    Defs,
+    ClipPath,
+    Polygon,
+} from 'react-native-svg';
 
 function Chat ({ route }) {
     const [message, setMessage] = useState('');
-    const [caregando, setCarregando] = useState(true);
-    const [caregandoMensagens, setCarregandoMensagens] = useState(true);
-    const [enviando, setEnviando] = useState(true);
     const [destinatario, setDestinatario] = useState({});
     const [allMessages, setAllMessages] = useState([]);
     const { usuario } = useContext(AuthContext);
@@ -20,8 +23,21 @@ function Chat ({ route }) {
     const [conversaExiste, setConversaExiste] = useState(false)
 
     /* useEffect(() => {
-        console.log(idUser, usuario.id, idConversa)
-    }, []); */
+        //setInterval(() => {
+            setAllMessages(
+                allMessages.sort(function (a, b) {
+                    if (a.createdAt?.seconds > b.createdAt?.seconds) {
+                    return 1;
+                    }
+                    if (a.createdAt?.seconds < b.createdAt?.seconds) {
+                    return -1;
+                    }
+                    // a must be equal to b
+                    return 0;
+                })
+            );
+        //}, 100);
+    }, [allMessages]); */
 
     useEffect(() => {
         async function load() {
@@ -47,6 +63,7 @@ function Chat ({ route }) {
                 .firestore()
                 .collection("mensagens")
                 .where("idConversa", "==", idConversa)
+                //.orderBy('createdAt', 'desc')
                 .onSnapshot((querySnapshot) => {
                     let aux = [];
 
@@ -54,22 +71,18 @@ function Chat ({ route }) {
                         aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() });
                     });
 
-                    /* if (!!aux[aux.length-1].createdAt) {
-                        aux.sort(function (a, b) {
-                            if (a.createdAt.seconds > b.createdAt.seconds) {
-                                return 1;
-                            }
-                            if (a.createdAt.seconds < b.createdAt.seconds) {
-                                return -1;
-                            }
-                            // a must be equal to b
-                            return 0;
-                        });
-                    } */
-
-                    //console.log(aux);
+                    aux.sort(function (a, b) {
+                        if (a.ordem < b.ordem) {
+                            return 1;
+                        }
+                        if (a.ordem > b.ordem) {
+                            return -1;
+                        }
+                        // a must be equal to b
+                        return 0;
+                    });
+                    
                     setAllMessages(aux);
-                    setCarregandoMensagens(false);
                 })
                 .catch((err) => {
                     ToastAndroid.show("Erro ao obter mensagens.", ToastAndroid.SHORT);
@@ -88,7 +101,7 @@ function Chat ({ route }) {
                 .get()
                 .then((querySnapshot) => {
                     let aux = [];
-
+                    
                     querySnapshot.forEach((documentSnapshot) => {
                         aux.push({ id: documentSnapshot.id, ...documentSnapshot.data() });
                     });
@@ -103,13 +116,42 @@ function Chat ({ route }) {
         load();
     }, []);
 
+    
+    function criarOrdem() {
+        const date = new Date();
+
+        let dia = date.getDate();
+        let mes = date.getMonth() + 1;
+        let ano = date.getFullYear();
+        let hora = date.getHours();
+        let minutos = date.getMinutes();
+        let segundos = date.getSeconds();
+        let milissegundos = date.getMilliseconds();
+
+        if (dia<10) dia = "0".concat(dia);
+        if (mes<10) mes = "0".concat(mes);
+        if (hora<10) hora = "0".concat(hora);
+        if (minutos<10) minutos = "0".concat(minutos);
+        if (segundos<10) segundos = "0".concat(segundos);
+        if (milissegundos < 10) milissegundos = "00".concat(milissegundos);
+        if (milissegundos >= 10 && milissegundos < 100) milissegundos = "0".concat(milissegundos);
+
+        const ordem = `${ano}/${mes}/${dia} ${hora}:${minutos}:${segundos}:${milissegundos}`;
+
+        return ordem;
+    }
+
+
     async function criarConversa(){
+        const ordem = criarOrdem();
+
         await firebase
             .firestore()
             .collection("conversas")
             .add({
                 idConversa,
                 idUser: usuario.id,
+                ordem,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             })
             .then(async (value) => {
@@ -119,6 +161,7 @@ function Chat ({ route }) {
                     .add({
                         idConversa,
                         idUser,
+                        ordem,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     })
                     .then((value) => {
@@ -135,6 +178,8 @@ function Chat ({ route }) {
     }
 
     async function send () {
+        const ordem = criarOrdem();
+
         await firebase
             .firestore()
             .collection("mensagens")
@@ -143,14 +188,37 @@ function Chat ({ route }) {
                 idRemetente: usuario.id,
                 idDestinatario: idUser,
                 idConversa,
+                ordem,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             })
             .then((value) => {
-                Keyboard.dismiss();
+                //Keyboard.dismiss();
                 setMessage('');
             })
             .catch((err) => {
                 Toast.show("Erro ao postar resposta.", Toast.SHORT);
+            });
+        
+        await firebase
+            .firestore()
+            .collection("conversas")
+            .where('idConversa', '==', idConversa)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((documentSnapshot) => {
+                    console.log('documentSnapshot.id')
+                    firebase
+                        .firestore()
+                        .collection("conversas")
+                        .doc(documentSnapshot.id)
+                        .update({
+                            ordem,
+                        });
+                });
+
+            })
+            .catch((err) => {
+                ToastAndroid.show("Erro ao obter mensagens.", ToastAndroid.SHORT);
             });
     }
 
@@ -165,13 +233,15 @@ function Chat ({ route }) {
             </View>
             <Image style={styles.avatar} source={{ uri: destinatario.avatar}} />
             <View style={styles.containerMessages}>
-                <ScrollView>
-                {
-                    allMessages.map(item => (
-                        <Mensagem key={item.id} msg={item} />
-                    ))
-                }
-                </ScrollView>
+                <FlatList
+                    inverted
+                    //showsVerticalScrollIndicator={false}
+                    data={allMessages}
+                    renderItem={({ item, index }) => (
+                        <Mensagem msg={item} />
+                    )}
+                    keyExtractor={(item) => String(item.id)}
+                />
             </View>
             <View style={styles.containerInput}>
                 <View style={styles.containerInput2}>
