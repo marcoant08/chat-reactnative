@@ -89,11 +89,13 @@ function Conversa (props) {
         let minutos = t.getMinutes(); */
 
 
+        //console.log(conv.ordem.substring(14, 16))
+
         let dia = Number(conv.ordem.substring(8, 10));
         let mes = Number(conv.ordem.substring(5, 7));
         let ano = Number(conv.ordem.substring(0, 4));
-        let hora = Number(conv.ordem.substring(10, 12));
-        let minutos = Number(conv.ordem.substring(13, 14));
+        let hora = Number(conv.ordem.substring(11, 13));
+        let minutos = Number(conv.ordem.substring(14, 16));
 
         const now = new Date();
         let nowdia = now.getDate();
@@ -118,8 +120,8 @@ function Conversa (props) {
         const horario = `${hora}:${minutos}`;
         const nowhorario = `${nowhora}:${nowminutos}`;
 
-        console.log(data, nowdata)
-        console.log(horario, nowhorario)
+        //console.log(data, nowdata)
+        //console.log(horario, nowhorario)
 
         //return `${horario}`
 
