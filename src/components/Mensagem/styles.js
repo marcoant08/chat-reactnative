@@ -8,12 +8,12 @@ const styles = StyleSheet.create({
 
   balao: {
     minHeight: 55,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     marginHorizontal: 10,
     marginVertical: 10,
     paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 40,
     shadowColor: "#000",
     shadowOffset: {
@@ -26,13 +26,13 @@ const styles = StyleSheet.create({
   },
 
   time: {
-      color: '#555',
-      paddingHorizontal: 10
+    color: "#555",
+    paddingHorizontal: 10,
   },
 
   mensagem: {
-      fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
 
 export default styles;

@@ -3,15 +3,11 @@ import React, { createContext, useState } from "react";
 export const AuthContext = createContext({});
 
 function AuthProvider({ children }) {
-  const [usuario, setUsuario] = useState({
-      id: 'epPBdIwKjOPNzRK1zgqLqS0JJQJ2',
-      nome: 'Marco',
-      email: 'marcoant008@gmail.com'
-  });
+  const [usuario, setUsuario] = useState({});
 
-  function alterar (u) {
-    console.log(u)
-    setUsuario(u)
+  function alterar(u) {
+    console.log(u);
+    setUsuario(u);
   }
 
   return (
